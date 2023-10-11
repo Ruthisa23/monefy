@@ -1,17 +1,10 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState, FC  } from "react";
 
-import {StyleSheet, View, Text, TextInput, Button, ToastAndroid, Image } from "react-native";
+import {Button, StyleSheet, TextInput, View, Text, Image } from "react-native";
+
 import firebaseApp from '../../../../config/database/firebase';
 
-
-const showMessage = (message: string) => {
-    ToastAndroid.showWithGravity(
-       message,
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
-    );
-}
 
 type Props = {
     navigation: any,
@@ -29,20 +22,18 @@ const LoginScreen :FC<Props> = ({ navigation }) => {
         .then((userCredential) => {
             console.log(userCredential.user);
             console.log("Usuario autenticado");
-            showMessage("¡Autenticación exitosa!");
-            navigation.replace('Main')
+            navigation.replace('Savings')
         })
         .catch((error) => {
             console.log(error.message);
             console.log(error);  
-            showMessage(`Error al iniciar sesion: ${error.message}`); 
         });
    }
 
     return (
         <View style={styles.container} >
             <Image
-                source={require('../../../../assets/iniciooo.png')}
+                source={require('../../../../assets/adaptive-icon.png')}
                 style={styles.backgroundImage}
             />
             <Text style={styles.title}> Ingresa a tu cuenta </Text>
