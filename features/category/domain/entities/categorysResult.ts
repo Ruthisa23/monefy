@@ -1,24 +1,15 @@
+import Category from "./categorys";
 
-import Character from "./categorys";
-
-
-class CharactersResult{
-    page : number;
-    count : number;
-    totalPages: number;
-    characters: Character[];
+class CategorysResult{
+    
+    category: Category[];
 
     constructor(
-        page: number,
-        count: number,
-        totalPages: number,
-        characters: Character[],
+
+        category: Category[],
     ) {
-        this.characters = characters;
-        this.page = page;
-        this.count = count;
-        this.totalPages = totalPages;
+        
+        this.category = category;
     }
 }
-
-export default CharactersResult;
+export default CategorysResult;

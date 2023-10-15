@@ -1,8 +1,8 @@
-import CharactersResult from "../entities/charactersResult";
+import CategorysResult from "../entities/categorysResult";
 
-abstract class CharactersRepository {
+abstract class CategorysRepository {
     // tendra una funcion para ller los personajes por numero de pagina, y retonarlos
-    abstract getCharacters(page: number) : Promise<CharactersResult>;
+    abstract getCategorys(): Promise<CategorysResult>;
 }
 
-export default CharactersRepository;
+export default CategorysRepository;

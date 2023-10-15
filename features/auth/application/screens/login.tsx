@@ -5,13 +5,12 @@ import {Button, StyleSheet, TextInput, View, Text, Image } from "react-native";
 
 import firebaseApp from '../../../../config/database/firebase';
 
-
 type Props = {
     navigation: any,
 }
 
 const LoginScreen :FC<Props> = ({ navigation }) => {
-    const [email, setEmail] = useState('valeriorurthisabel@gmail.com');
+    const [email, setEmail] = useState('');
     const [password, setpassword] = useState('');
    
    const onLogin = () => {

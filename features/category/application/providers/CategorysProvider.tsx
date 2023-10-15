@@ -1,64 +1,52 @@
-//manejo de estado para personajes
-
 import { FC, ReactNode, createContext, useReducer, useContext} from "react";
-import Character from "../../domain/entities/character"
-import CharactersResult from "../../domain/entities/charactersResult";
-import CharactersRepositoryImp from "../../infraestructure/repositories/charactersRepositoryImp";
-import CharacterDatasourceImp from "../../infraestructure/datasources/charactersDatasourceImp";
 
-//estructura decontext
+import Category from "../../domain/entities/categorys";
+import CategorysResult from "../../domain/entities/categorysResult";
+import CategorysRepositoryImp from "../../infraestructure/repositories/categorysRepositoryImp";
+import CategorysDatasourceImp from "../../infraestructure/datasources/categorysDatasourceImp";
+
+//estructura de context
 
 interface ContextDefinition{
-    loading:  boolean,
-    page:number,
-    totalpages:number,
-    count:number,
-    characters:Character[],
 
-    getCharacters:(page:number)=>void;
+    loading:  boolean,
+    categorys:Category[],
+
+    getCategorys:()=>void;
 }
 
-const charactersContext = createContext ( {} as ContextDefinition);
+const categorysContext = createContext ( {} as ContextDefinition);
 
 
-interface CharacterState {
+interface CategorysState {
     loading:  boolean,
-    page:number,
-    totalpages:number,
-    count:number,
-    characters:Character[],
+    categorys:Category[],
 }
 
 //definir los tipos de acciones que podra ejecutar el context
 
-type CharactersActionType = 
+type CategorysActionType = 
 { type: 'Set Loading', payload: boolean}
-|    {type: 'Set Data', payload: CharactersResult}
+|    {type: 'Set Data', payload: CategorysResult}
     
 //iniciar el state
 
-const InitialState : CharacterState = {
+const InitialState : CategorysState = {
     
     loading:  false,
-    page: 0,
-    count: 0,
-    totalpages: 0,
-    characters: [],
+    categorys: [],
 }
 
-function characterReducer(
-    state: CharacterState,
-    action: CharactersActionType){
+function categoryReducer(
+    state: CategorysState,
+    action: CategorysActionType){
         switch (action.type){
             case 'Set Loading':
                 return{...state, loading: action.payload};
             case 'Set Data':
                 return {
                     ...state,
-                    page:action.payload.page,
-                    count:action.payload.count,
-                    totalPages:action.payload.totalPages,
-                    characters:action.payload.characters,
+                    categorys:action.payload.category,
                     loading: false
                 }
                 default:
@@ -71,14 +59,14 @@ type Props = {
         children?: ReactNode
 }
 
-const CharactersProvider:FC<Props> = ({ children }) => {
-    const [state, dispatch] = useReducer( characterReducer, InitialState);
+const CategorysProvider:FC<Props> = ({ children }) => {
+    const [state, dispatch] = useReducer( categoryReducer, InitialState);
 
     //acciones
 
-    const getCharacters = async (page: number) => {
-        const reposirtory = new CharactersRepositoryImp(
-            new CharacterDatasourceImp()
+    const getCategorys = async () => {
+        const reposirtory = new CategorysRepositoryImp(
+            new CategorysDatasourceImp()
         );
 
 //cambiar el estado a loaging
@@ -88,7 +76,7 @@ const CharactersProvider:FC<Props> = ({ children }) => {
             payload: true,
         })
 
-        const apiResult = await reposirtory.getCharacters(page);
+        const apiResult = await reposirtory.getCategorys();
 
         dispatch({
             type: 'Set Data',
@@ -97,22 +85,22 @@ const CharactersProvider:FC<Props> = ({ children }) => {
     }
 
     return(
-        <charactersContext.Provider value ={{
+        <categorysContext.Provider value ={{
             ...state,
-            getCharacters
+            getCategorys
         }}>
         {children}
-        </charactersContext.Provider>
+        </categorysContext.Provider>
     )
 };
 
-    function useCharactersState(){
-        const context = useContext(charactersContext);
+    function useCategorysState(){
+        const context = useContext(categorysContext);
         if(context === undefined){
-            throw new Error ("useCharactersState debe ser usado" + "con un charactersProvider");
+            throw new Error ("useCategorysState debe ser usado" + "con un categorysProvider");
         }
 
         return context;
     }
 
-export {CharactersProvider, useCharactersState}
+export {CategorysProvider, useCategorysState}
