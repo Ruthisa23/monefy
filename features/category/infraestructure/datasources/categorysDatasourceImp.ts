@@ -1,31 +1,31 @@
-import CharactersDatasource from "../../domain/datasourses/charactersDatasource";
-import Character from "../../domain/entities/character";
-import CharactersResult from "../../domain/entities/charactersResult";
+import CategorysDatasource from "../../domain/datasourses/categorysDatasource";
+import Category from "../../domain/entities/categorys";
+import CategorysResult from "../../domain/entities/categorysResult";
 
-class CharacterDatasourceImp extends CharactersDatasource {
-    getCharacters(page: number): Promise<CharactersResult> {
-        return fetch('https://rickandmortyapi.com/api/character')
+class CategorysDatasourceImp extends CategorysDatasource {
+    async getCategorys(): Promise<CategorysResult> {
+
+        return fetch('http://192.168.8.13:3000/api/category')
         .then((response) => response.json())
         .then((response) => {
-            // response.data { info, results}
-            const characters = response.results.map((item : any) => new Character(
+
+            console.log(response);
+
+            if (!response) {
+                return new CategorysResult(
+                    []
+                )
+            }
+            const category = response.map((item : any) => new Category(
                 item.id,
-                item.name,
-                item.status,
-                item.gender,
-                item.image,
-                item.origin,
-                item.species,
+                item.name
                 )
             );
-            return new CharactersResult(
-                page,
-                response.info.count,
-                response.info.pages,
-                characters
+            return new CategorysResult(
+                category
             )
         });
     }
 }
 
-export default CharacterDatasourceImp;
+export default CategorysDatasourceImp;

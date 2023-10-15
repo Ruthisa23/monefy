@@ -1,9 +1,8 @@
+import CategorysResult from "../entities/categorysResult";
 
-import CharactersResult from "../entities/categorysResult";
-
-abstract class CharactersDatasource {
-    // tendra una funcion para ller los personajes por numero de pagina, y retonarlos
-    abstract getCharacters(page: number) : Promise<CharactersResult>;
+abstract class CategorysDatasource {
+    // tendra una funcion para leer las categorias por numero de pagina, y retonarlos
+    abstract getCategorys() : Promise<CategorysResult>;
 }
 
-export default CharactersDatasource;
+export default CategorysDatasource;

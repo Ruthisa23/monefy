@@ -1,27 +1,22 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
-import Character from "../../../domain/entities/character";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import Category from "../../../domain/entities/categorys";
+import React from 'react';
 
 type CardProps = {
-    character : Character,
+    category : Category,
 }
 
-export default function CharacterCard (props : CardProps) {
+export default function CategoryCard (props : CardProps) {
 
     return (
         <View style={styles.container}>
             
-            <TouchableOpacity style={styles.cardContainer}>
-                <Image
-                    source={{ uri: props.character.image }}
-                    style={styles.cardImage}
-                />
+            <TouchableOpacity style={{ ...styles.cardContainer}}>
+   
                 <View style={styles.cardContent}>
-                    <Text style={styles.cardTitle}>{props.character.name}</Text>
                     <View style={styles.cardInfo}>
-                    <Text style={styles.info}>Status: {props.character.status}</Text>
-                    <Text style={styles.info}>Gender: {props.character.gender}</Text>
-                    <Text style={styles.info}>Origin: {props.character.gender}</Text>
-                    <Text style={styles.info}>Specie: {props.character.gender}</Text>
+                    <Text style={styles.info}>Id: {props.category.id}</Text>
+                    <Text style={styles.info}>Nombre: {props.category.name}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -29,9 +24,11 @@ export default function CharacterCard (props : CardProps) {
     );
 }
 
+
+
 const styles = StyleSheet.create({
     container: {
-
+        
         flex: 1,
         flexWrap: "wrap",
         flexDirection: "row",
@@ -48,7 +45,7 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         border: 1,
         width:300,
-        height:500,
+        height:150,
         overflow: "hidden",
         margin: 8
     },
@@ -68,7 +65,7 @@ const styles = StyleSheet.create({
 
     cardTitle: {
         textAlign: "center",
-        fontSize: 30,
+        fontSize: 20,
         color: "#FFFFFF"
     },
 
@@ -81,7 +78,7 @@ const styles = StyleSheet.create({
     info: {
         marginBottom: 10,
         textAlign: "center",
-        color: 'grey',
-        fontSize: 30,
+        color: 'white',
+        fontSize: 20,
     }
 })

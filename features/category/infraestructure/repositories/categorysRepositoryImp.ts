@@ -1,18 +1,18 @@
-import CharactersDatasource from "../../domain/datasourses/charactersDatasource";
-import CharactersResult from "../../domain/entities/charactersResult";
-import CharactersRepository from "../../domain/repositorio/charactersRepository";
+import CategorysDatasource from "../../domain/datasourses/categorysDatasource";
+import CategorysResult from "../../domain/entities/categorysResult";
+import CategorysRepository from "../../domain/repositorio/categorysRepository";
 
-class CharactersRepositoryImp extends CharactersRepository {
-    datasource: CharactersDatasource;
+class CategorysRepositoryImp extends CategorysRepository {
 
-    constructor(datasource: CharactersDatasource) {
+    datasource: CategorysDatasource;
+
+    constructor(datasource: CategorysDatasource) {
         super();
         this.datasource = datasource;
     }
 
-    getCharacters(page: number): Promise<CharactersResult> {
-        return this.datasource.getCharacters(page);
+    getCategorys(): Promise<CategorysResult> {
+        return this.datasource.getCategorys();
     }
 }
-
-export default CharactersRepositoryImp;
+export default CategorysRepositoryImp;
