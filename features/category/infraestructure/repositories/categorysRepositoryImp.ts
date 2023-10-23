@@ -6,6 +6,8 @@ class CategorysRepositoryImp extends CategorysRepository {
 
     datasource: CategorysDatasource;
 
+    
+
     constructor(datasource: CategorysDatasource) {
         super();
         this.datasource = datasource;

@@ -3,6 +3,12 @@ import Category from "../../domain/entities/categorys";
 import CategorysResult from "../../domain/entities/categorysResult";
 
 class CategorysDatasourceImp extends CategorysDatasource {
+    
+    addCategory(category: Category): Promise<Category> {
+        throw new Error("Method not implemented.");
+    }
+    
+
     async getCategorys(): Promise<CategorysResult> {
 
         return fetch('http://192.168.8.13:3000/api/category')
@@ -26,6 +32,8 @@ class CategorysDatasourceImp extends CategorysDatasource {
             )
         });
     }
+
+    
 }
 
 export default CategorysDatasourceImp;
