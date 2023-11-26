@@ -1,28 +1,33 @@
-import React, { useState, useEffect} from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList  } from 'react-native';
 import { AddCategoryProvider, useAddCategoryState } from '../../providers/addCategoryProvider';
 import Modal from 'react-native-modal';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 
 
-const AddCategoryModal = ({ isVisible, closeModal}) => {
+const AddCategoryModal = ({ isVisible, closeModal, updateCategories }) => {
 
   const { loading, saving, category, setCategoryProp, saveCategory} = useAddCategoryState();
-  const [forceUpdate, setForceUpdate] = useState(false);
-
-    const handleSaveCategory = async () => {
-      await saveCategory();
-      setForceUpdate(true);
-    };
-
-    useEffect(() => {
-      if (forceUpdate) {
-        // Realiza las operaciones necesarias después de guardar aquí
-        // Por ejemplo, recargar datos o realizar otras operaciones.
-        setForceUpdate(false);
+  
+  const handleSaveCategory = async () => {
+    try {
+    await saveCategory();
+    updateCategories(); // Actualizar la lista de categorías
+    closeModal();
+    
+    } catch (error) {
+      console.error("Error al guardar la categoría:", error);
+      console.log("Respuesta del servidor:", error.response);
+  
+      if (typeof error.response === 'string') {
+        console.log("Respuesta del servidor (no JSON):", error.response);
+      } else {
+        throw error;
       }
-    }, [forceUpdate]);
+    }
+  };
+  
 
   return (
     <Modal isVisible={isVisible}>
@@ -43,7 +48,7 @@ const AddCategoryModal = ({ isVisible, closeModal}) => {
 
         <View style={styles.buttonContainer}>
           
-          <TouchableOpacity onPress={() => saveCategory()}>
+          <TouchableOpacity onPress={() => handleSaveCategory()}>
             <Button style={styles.button} buttonColor='#f45572' >
                   <Icon name="check" size={20} color="white" /> 
             </Button>

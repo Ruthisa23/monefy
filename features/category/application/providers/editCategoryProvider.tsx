@@ -106,7 +106,8 @@ const EditCategoryProvider:FC<Props> = ({ children }) => {
       payload: false,
     });
 
-    onSaved(null);
+    onSaved(state.category);
+    return;
     
   }
 
@@ -117,6 +118,8 @@ const EditCategoryProvider:FC<Props> = ({ children }) => {
         type: 'Set Category',
         payload: category
       });
+
+      
 
   }
 

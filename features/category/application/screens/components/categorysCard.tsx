@@ -25,7 +25,9 @@ const CategoryCard: React.FC<CardProps> = ({
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModalVisibleE, setModalVisibleE] = useState(false);
+
     const [deleted, setDeleted, ] = useState(false);
+
     const [currentColor, setCurrentColor] = useState(getNextColor());
 
     const toggleModal = () => {

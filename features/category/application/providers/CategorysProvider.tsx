@@ -16,6 +16,7 @@ interface ContextDefinition{
 
     getCategorys:()=>void;
     setCategorySelected:(category: Category | null) => void;
+    onUpdateCategory: (category: Category) => void;
 }
 
 const categorysContext = createContext ( {} as ContextDefinition);
@@ -108,11 +109,30 @@ const CategorysProvider:FC<Props> = ({ children }) => {
         });
     }
 
+    function onUpdateCategory(category: Category) {
+        //buscar el registro en category y reemplazarlo
+        //actualizar el estado category
+        const categorysClone = [...state.categorys];
+        const index = categorysClone.findIndex((item)=> item.id == category.id);
+        categorysClone.splice(index, 1, category);
+
+        dispatch({
+            type: 'Set Data',
+            payload: {
+                category: categorysClone,
+            }
+        }
+        )
+        //cerrar el modal
+        setCategorySelected(null);
+    }
+
     return(
         <categorysContext.Provider value ={{
             ...state,
             getCategorys,
             setCategorySelected,
+            onUpdateCategory,
         }}>
         {children}
         </categorysContext.Provider>

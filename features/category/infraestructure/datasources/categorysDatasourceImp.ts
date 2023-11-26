@@ -7,7 +7,7 @@ class CategorysDatasourceImp extends CategorysDatasource {
 
     deleteCategory(id: any): Promise<Category> {
 
-
+        
          return fetch (`${backendConfig.url}/api/category?id=${id}`, {
             method: "DELETE",
             headers: {
@@ -19,14 +19,16 @@ class CategorysDatasourceImp extends CategorysDatasource {
             console.log(response);
 
         return response;
+
+        
             
          })
     }
 
     addCategory(category: Category): Promise<Category> {
         
-        //console.log(category);
-         return fetch (`${backendConfig.url}/api/category`, {
+        console.log(category);
+         return fetch (`${backendConfig.url}/api/category?id=${category.id}`, {
             method: !category.id ? "POST" : "PUT",
             body: JSON.stringify(category),
             headers: {
@@ -35,7 +37,9 @@ class CategorysDatasourceImp extends CategorysDatasource {
          })
          .then((response) => response.json())
          .then((response) => {
-            console.log(response);
+            
+        console.log(response);
+
             return category;
             
          })
@@ -47,7 +51,7 @@ class CategorysDatasourceImp extends CategorysDatasource {
         .then((response) => response.json())
         .then((response) => {
 
-            //console.log(response);
+            console.log(response);
 
             if (!response) {
                 return new CategorysResult(

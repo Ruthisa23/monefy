@@ -4,7 +4,11 @@ import CategoryCard from './components/categorysCard';
 import { CategorysProvider, useCategorysState } from '../providers/CategorysProvider';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Cambia MaterialIcons por el conjunto de íconos que desees usar
+
+
 import AddCategoryScreen from './components/addCategoryScreen';
+
+
 import EditCategoryScreen from './components/categoryEditModal';
 
 const CategorysScreenView = () => {
@@ -17,6 +21,7 @@ const CategorysScreenView = () => {
     //actions
     getCategorys,
     setCategorySelected,
+    onUpdateCategory,
    } = useCategorysState();
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -61,14 +66,17 @@ const CategorysScreenView = () => {
     
       </View>
       
-      <AddCategoryScreen isVisible={isModalVisible} closeModal={toggleModal} />
+      <AddCategoryScreen 
+      isVisible={isModalVisible} 
+      closeModal={toggleModal}
+      />
 
       {!!categorySelected ? (
 
         <EditCategoryScreen
         categoryEdit={categorySelected}
         isVisible={!!categorySelected}
-        onSaved={setCategorySelected}
+        onSaved={onUpdateCategory}
         closeModal={setCategorySelected}
         />
 
