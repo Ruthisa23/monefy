@@ -15,29 +15,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      // "infoPlist": {
-      //   "NSCameraUsageDescription": "Usaremos la camara para tomar fotos",
-      //   "NSLocationUsageDescription": "Usaremos la localizacion para no perderte",
-      //   "NSLocalNetworkUsageDescription": "Usaremos conexion a internet para estar al tanto",
-      //   "NSContactsUsageDescription": "Usaremos tus contactos para llamarlos y estafarlos"
-
-      // }
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      // "permissions": [
-      //   "android.permissions.CAMERA",
-      //   "android.permissions.ACCESS_BACKGROUND_LOCATION",
-      //   "android.permissions.ACCESS_FINE_LOCATION",
-      //   "android.permissions.READ_CONTACTS"
-      // ]
+      "package": "com.rosasvega04.monefy"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cb618355-2099-49f6-b330-99041f43fc3f"
+      }
     }
   }
 }
