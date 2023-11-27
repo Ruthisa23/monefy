@@ -1,6 +1,7 @@
 import { FC, ReactNode, createContext, useReducer, useContext} from "react";
 
 import Category from "../../domain/entities/categorys";
+
 import CategorysResult from "../../domain/entities/categorysResult";
 import CategorysRepositoryImp from "../../infraestructure/repositories/categorysRepositoryImp";
 import CategorysDatasourceImp from "../../infraestructure/datasources/categorysDatasourceImp";
@@ -10,9 +11,12 @@ import CategorysDatasourceImp from "../../infraestructure/datasources/categorysD
 interface ContextDefinition{
 
     loading:  boolean,
-    categorys:Category[],
+    categorys:Category[];
+    categorySelected: Category | null;
 
     getCategorys:()=>void;
+    setCategorySelected:(category: Category | null) => void;
+    onUpdateCategory: (category: Category) => void;
 }
 
 const categorysContext = createContext ( {} as ContextDefinition);
@@ -21,13 +25,16 @@ const categorysContext = createContext ( {} as ContextDefinition);
 interface CategorysState {
     loading:  boolean,
     categorys:Category[],
+    categorySelected: Category | null;
 }
 
 //definir los tipos de acciones que podra ejecutar el context
 
 type CategorysActionType = 
-{ type: 'Set Loading', payload: boolean}
-|    {type: 'Set Data', payload: CategorysResult}
+    |  { type: 'Set Loading', payload: boolean}
+    |  {type: 'Set Data', payload: CategorysResult}
+    |  {type: 'Set Categrory Selected', payload:  Category | null}
+    // |  {type: 'Set Category Selected', payload: Category | null } //parte para editar
     
 //iniciar el state
 
@@ -35,6 +42,7 @@ const InitialState : CategorysState = {
     
     loading:  false,
     categorys: [],
+    categorySelected: null,
 }
 
 function categoryReducer(
@@ -42,16 +50,24 @@ function categoryReducer(
     action: CategorysActionType){
         switch (action.type){
             case 'Set Loading':
-                return{...state, loading: action.payload};
+                return {
+                    ...state, 
+                    loading: action.payload
+                };
             case 'Set Data':
                 return {
                     ...state,
                     categorys:action.payload.category,
                     loading: false
-                }
+                };
+            case 'Set Categrory Selected':
+                return {
+                    ...state,
+                    categorySelected:action.payload,
+                };
                 default:
                     return state;
-        }
+    }
 }
     //implementar el proveedor para Characters
 
@@ -69,25 +85,54 @@ const CategorysProvider:FC<Props> = ({ children }) => {
             new CategorysDatasourceImp()
         );
 
+    
 //cambiar el estado a loaging
 
         dispatch({
             type: 'Set Loading',
             payload: true,
-        })
+        });
 
         const apiResult = await reposirtory.getCategorys();
 
         dispatch({
             type: 'Set Data',
             payload: apiResult,
-        })
+        });
+    };
+
+    function setCategorySelected (category: Category | null) {
+   
+        dispatch({
+            type: 'Set Categrory Selected',
+            payload: category,
+        });
+    }
+
+    function onUpdateCategory(category: Category) {
+        //buscar el registro en category y reemplazarlo
+        //actualizar el estado category
+        const categorysClone = [...state.categorys];
+        const index = categorysClone.findIndex((item)=> item.id == category.id);
+        categorysClone.splice(index, 1, category);
+
+        dispatch({
+            type: 'Set Data',
+            payload: {
+                category: categorysClone,
+            }
+        }
+        )
+        //cerrar el modal
+        setCategorySelected(null);
     }
 
     return(
         <categorysContext.Provider value ={{
             ...state,
-            getCategorys
+            getCategorys,
+            setCategorySelected,
+            onUpdateCategory,
         }}>
         {children}
         </categorysContext.Provider>

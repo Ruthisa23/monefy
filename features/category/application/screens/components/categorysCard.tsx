@@ -1,84 +1,166 @@
+import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import Category from "../../../domain/entities/categorys";
-import React from 'react';
+import { getNextColor } from '../../../../../components/colors';
+
+import backendConfig from "../../../../../config/backend/config";
+
+
+import { Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Cambia MaterialIcons por el conjunto de íconos que desees usar
+import ConfirmationModal from '../../../../../components/modal';
+import EditCategoryScreen from './categoryEditModal';
+
 
 type CardProps = {
     category : Category,
+    onEdit?: Function,
 }
 
-export default function CategoryCard (props : CardProps) {
+
+const CategoryCard: React.FC<CardProps> = ({
+    category,
+    onEdit,
+}) => {
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalVisibleE, setModalVisibleE] = useState(false);
+
+    const [deleted, setDeleted, ] = useState(false);
+
+    const [currentColor, setCurrentColor] = useState(getNextColor());
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
+    const toggleModalEdit = () => {
+        setModalVisibleE(!isModalVisibleE);
+    };
+
+    const handleEdit = () => {
+      //toggleModalEdit();
+        if(onEdit){
+            onEdit(category);
+        }
+    };
+
+    const confirmDelete = async () => {
+        try {
+            await deleteC(category.id);
+            // Cierra el modal después de la eliminación
+            toggleModal();
+        } catch (error) {
+            // Manejar cualquier error que ocurra durante la eliminación
+        }
+    }
+
+    const deleteC = async (id:any) => {
+      
+        return fetch (`${backendConfig.url}/api/category?id=${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+         })
+         .then((response) => response.json())
+         .then((response) => {
+            console.log(response);
+
+        setDeleted(true);
+    
+        return response;
+            
+         });
+    
+    };
+
+    useEffect(() => {
+        setCurrentColor(getNextColor()); // Actualiza el color al montar el componente
+    }, []); // Asegura que esto se ejecute solo una vez al montar
+
+    // Verificar si la categoría se ha eliminado
+    if (deleted) {
+    // Puedes mostrar un mensaje o hacer cualquier otra acción aquí
+        return null;
+    }
 
     return (
-        <View style={styles.container}>
+
+            <View style={styles.container}>
             
-            <TouchableOpacity style={{ ...styles.cardContainer}}>
-   
-                <View style={styles.cardContent}>
-                    <View style={styles.cardInfo}>
-                    <Text style={styles.info}>Id: {props.category.id}</Text>
-                    <Text style={styles.info}>Nombre: {props.category.name}</Text>
-                    </View>
+                <TouchableOpacity style={{ ...styles.cardContainer, backgroundColor: currentColor}}>
+           
+                    <View>
+                        <View style={styles.cardInfo}>
+                        <Text style={styles.info}>Id: {category.id}</Text>
+                        <Text style={styles.info}>Nombre: {category.name}</Text>
+                        </View>
+            
+                    </View> 
+                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                    
+                    <Button style={styles.button} buttonColor='#6a9eda' onPress={handleEdit}>
+                        <Icon name="refresh" size={20} color="white" /> 
+                    </Button>
+
+                    <Button style={styles.button} buttonColor='#f45572' onPress={() => toggleModal()}>
+                        <Icon name="delete" size={20} color="white" />
+                    </Button>
+                    <ConfirmationModal
+                        isVisible={isModalVisible}
+                        onAccept={confirmDelete}
+                        onCancel={toggleModal}
+                    />
                 </View>
-            </TouchableOpacity>
-        </View>
+            </View>
+        
     );
 }
 
+export default CategoryCard;
 
 
 const styles = StyleSheet.create({
-    container: {
+
+    container: {  
+
+        display:'flex',
+        height:'auto',
+        width:'auto',
         
-        flex: 1,
-        flexWrap: "wrap",
-        flexDirection: "row",
-        padding: 5,
-        paddingHorizontal:2,
-        alignItems: "center",
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginTop: 30,
     },
+    
     cardContainer: {
-        backgroundColor: "black",
+
         padding: 8,
         borderRadius: 14,
         border: 1,
-        width:300,
-        height:150,
+        width:144,
+        minHeight: 110,
         overflow: "hidden",
         margin: 8
     },
 
-    cardImage: {
-        borderRadius: 5,
-        width: 282,
-        height: 200,
-        position: "relative",
-        objectFit: "cover",
-        margin: 0
-    },
-
-    cardContent: {
-        marginLeft: 10,
-    },
-
-    cardTitle: {
-        textAlign: "center",
-        fontSize: 20,
-        color: "#FFFFFF"
-    },
-
     cardInfo: {
-        padding: 8,
-        marginTop: 19,
+        padding: 8
        
     },
 
     info: {
-        marginBottom: 10,
+        marginBottom: 2,
         textAlign: "center",
-        color: 'white',
-        fontSize: 20,
+        color: 'black',
+        fontSize: 16,
+    },
+    buttonContainer: {
+        flexDirection: 'row'
+    },
+    button: {
+        width: 'auto',
+        marginLeft: 8,
+        marginRight: 8
+
     }
 })
