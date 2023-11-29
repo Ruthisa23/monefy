@@ -1,8 +1,12 @@
-import CharactersResult from "../entities/charactersResult";
+import Saving from "../entities/savings";
+import SavingsResult from "../entities/savingsResult";
 
-abstract class CharactersRepository {
+
+abstract class SavingsRepository {
     // tendra una funcion para ller los personajes por numero de pagina, y retonarlos
-    abstract getCharacters(page: number) : Promise<CharactersResult>;
+    abstract getSavings(): Promise<SavingsResult>;
+    
+    abstract deleteSaving(id:any): Promise<Saving>;
 }
 
-export default CharactersRepository;
+export default SavingsRepository;
