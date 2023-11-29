@@ -1,30 +1,30 @@
-import CharactersDatasource from "../datasourses/savingsDatasource";
+import categorysDatasource from "../datasourses/savingsDatasource";
 
-class Character {
-    id: number;
-    name: string;
-    status: string;
-    gender: string;
-    image: string;
-    origin: string;
-    species: string;
+class Saving {
+    
+    id?: number;
+    description: string;
+    acount: number;
+    balance: number;
+    categoryId: number;
+    clientId: number;
 
     constructor(
-        id: number,
-        name: string,
-        status: string,
-        gender: string,
-        image: string,
-        origin: string,
-        species: string,
+        
+        description: string,
+        acount: number,
+        balance: number,
+        categoryId: number,
+        clientId: number,
+        id?: number,
+
     ) {
         this.id = id;
-        this.name = name;
-        this.status = status;
-        this.gender = gender;
-        this.image = image;
-        this.origin = origin;
-        this.species = species;
+        this.description = description;
+        this.acount = acount;
+        this.balance = balance;
+        this.categoryId = categoryId;
+        this.clientId = clientId;
     }
 }
-export default Character;
+export default Saving;

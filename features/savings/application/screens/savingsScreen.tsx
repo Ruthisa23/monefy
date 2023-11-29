@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import CategoryCard from './components/categorysCard';
+import SavingCard from './components/savingsCard';
 
-import { CategorysProvider, useCategorysState } from '../providers/CategorysProvider';
+//import { SavingsProvider, useSavingsState } from '../providers/SavingsProvider';
+import { SavingsProvider, useSavingsState } from '../providers/SavingsProvider'; //la ultima carpeta no se llama asi, error y no error
 
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Cambia MaterialIcons por el conjunto de íconos que desees usar
 
 
-import AddCategoryScreen from './components/addCategoryScreen';
+import AddSavingScreen from './components/addSavingScreen';
 
 
-import EditCategoryScreen from './components/categoryEditModal';
+import EditSavingScreen from './components/savingEditModal';
 
-const CategorysScreenView = () => {
+const SavingsScreenView = () => {
 
   const { 
-    categorys,
+    savings,
     loading,
-    categorySelected,
+    savingSelected,
 
     //actions
-    getCategorys,
-    setCategorySelected,
-    onUpdateCategory,
-   } = useCategorysState();
+    getSavings,
+    setSavingSelected,
+    onUpdateSaving,
+   } = useSavingsState();
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -33,23 +34,23 @@ const CategorysScreenView = () => {
   };
 
   const renderCards = () => {
-    if(!categorys)
+    if(!savings)
     {
       return null;
     }
     
-    return categorys?.map((category) => (
-      <CategoryCard 
-      key={`category${category.id}`} 
-      category={category} 
-      onEdit={setCategorySelected}
+    return savings?.map((saving) => (
+      <SavingCard 
+      key={`saving${saving.id}`} 
+      saving={saving} 
+      onEdit={setSavingSelected}
       />
       )
     );
   }
 
   useEffect(() => {
-    getCategorys();
+    getSavings();
   }, []);
 
     return (
@@ -68,18 +69,18 @@ const CategorysScreenView = () => {
     
       </View>
       
-      <AddCategoryScreen 
+      <AddSavingScreen 
       isVisible={isModalVisible} 
       closeModal={toggleModal}
       />
 
-      {!!categorySelected ? (
+      {!!savingSelected ? (
 
-        <EditCategoryScreen
-        categoryEdit={categorySelected}
-        isVisible={!!categorySelected}
-        onSaved={onUpdateCategory}
-        closeModal={setCategorySelected}
+        <EditSavingScreen
+        savingEdit={savingSelected}
+        isVisible={!!savingSelected}
+        onSaved={onUpdateSaving}
+        closeModal={setSavingSelected}
         />
 
       ) : null }
@@ -90,13 +91,12 @@ const CategorysScreenView = () => {
   );
 }
 
-const CategorysScreen = (props: any) => (
-  <CategorysProvider>
-    <CategorysScreenView {...props} /> 
-  </CategorysProvider>
+const SavingsScreen = (props: any) => (
+  <SavingsProvider>
+    <SavingsScreenView {...props} /> 
+  </SavingsProvider>
 )
 
-export default CategorysScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -118,3 +118,5 @@ const styles = StyleSheet.create({
   }
 
 });
+
+export default SavingsScreen;
