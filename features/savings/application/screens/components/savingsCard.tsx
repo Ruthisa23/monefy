@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import Category from "../../../domain/entities/savings";
-import { getNextColor } from '../../../../../components/colors';
-
-import backendConfig from "../../../../../config/backend/config";
-
-
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Cambia MaterialIcons por el conjunto de íconos que desees usar
+
+
+import { getNextColor } from '../../../../../components/colors';
+import backendConfig from "../../../../../config/backend/config";
+
+import Saving from '../../../domain/entities/savings';
+import EditSavingScreen from './savingEditModal';
 import ConfirmationModal from '../../../../../components/modal';
-import EditCategoryScreen from './categoryEditModal';
 
 
 type CardProps = {
-    category : Category,
+    saving : Saving,
     onEdit?: Function,
 }
 
 
-const CategoryCard: React.FC<CardProps> = ({
-    category,
+const SavingCard: React.FC<CardProps> = ({
+    saving,
     onEdit,
 }) => {
 
@@ -41,13 +41,13 @@ const CategoryCard: React.FC<CardProps> = ({
     const handleEdit = () => {
       //toggleModalEdit();
         if(onEdit){
-            onEdit(category);
+            onEdit(saving);
         }
     };
 
     const confirmDelete = async () => {
         try {
-            await deleteC(category.id);
+            await deleteC(saving.id);
             // Cierra el modal después de la eliminación
             toggleModal();
         } catch (error) {
@@ -57,7 +57,7 @@ const CategoryCard: React.FC<CardProps> = ({
 
     const deleteC = async (id:any) => {
       
-        return fetch (`${backendConfig.url}/api/category?id=${id}`, {
+        return fetch (`${backendConfig.url}/api/savings?id=${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -93,8 +93,9 @@ const CategoryCard: React.FC<CardProps> = ({
            
                     <View>
                         <View style={styles.cardInfo}>
-                        <Text style={styles.info}>Id: {category.id}</Text>
-                        <Text style={styles.info}>Nombre: {category.name}</Text>
+                        <Text style={styles.info}>Id: {saving.id}</Text>
+                        <Text style={styles.info}>Descripcion: {saving.description}</Text>
+                        <Text style={styles.info}>Monto: {saving.acount}</Text>
                         </View>
             
                     </View> 
@@ -119,7 +120,7 @@ const CategoryCard: React.FC<CardProps> = ({
     );
 }
 
-export default CategoryCard;
+export default SavingCard;
 
 
 const styles = StyleSheet.create({

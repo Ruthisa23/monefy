@@ -3,20 +3,20 @@ import Modal from 'react-native-modal';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import Category from '../../../domain/entities/savings';
-import { EditCategoryProvider, useEditCategoryState } from '../../providers/editSavingProvider';
+import Saving from '../../../domain/entities/savings';
+import { EditSavingProvider, useEditSavingState } from '../../providers/editSavingProvider';
 import React, { useEffect} from 'react';
 
-interface CategoryEditViewProps {
+interface SavingEditViewProps {
 
-    categoryEdit: Category,
+    savingEdit: Saving,
     onSaved: Function,
     isVisible: boolean;
     closeModal: Function;
 }
 
-const EditCategoryModal: React.FC<CategoryEditViewProps> = ({ 
-    categoryEdit,
+const EditSavingModal: React.FC<SavingEditViewProps> = ({ 
+    savingEdit,
     onSaved,
     isVisible, 
     closeModal,
@@ -24,34 +24,35 @@ const EditCategoryModal: React.FC<CategoryEditViewProps> = ({
 
     const { 
         loading,
-        saving, 
-        category, 
+        saved, 
 
-        setCategoryProp, 
-        saveCategory,
-        setCategory,
-    } = useEditCategoryState();
+        saving, 
+
+        setSavingProp, 
+        saveSaving,
+        setSaving,
+    } = useEditSavingState();
 
     //al recibir el usuario a editar, pasarlo al proveedor de estado
 
     useEffect(() => {
-        setCategory(categoryEdit)
-    }, [categoryEdit]);
+        setSaving(savingEdit)
+    }, [savingEdit]);
 
 
 
     return (
         <Modal isVisible={isVisible}>
         <View style={styles.modalContainer}>
-            <Text style={styles.info}>Actualizar Categoria</Text>
+            <Text style={styles.info}>Actualizar Ingreso</Text>
 
             <View style={styles.inputView}>
             <TextInput style={styles.inputText}
                 placeholder="Escribe aqui"
                 placeholderTextColor="#808080"
-                value={category?.name || ''}
+                value={saving?.description || ''}
                 onChangeText={(text) => {
-                    setCategoryProp('name', text);
+                    setSavingProp('name', text);
                 }}
                 textContentType="name"
                 />
@@ -59,7 +60,7 @@ const EditCategoryModal: React.FC<CategoryEditViewProps> = ({
 
             <View style={styles.buttonContainer}>
             
-            <TouchableOpacity onPress={() => saveCategory(onSaved)}>
+            <TouchableOpacity onPress={() => saveSaving(onSaved)}>
                 <Button style={styles.button} buttonColor='#f45572' >
                     <Icon name="check" size={20} color="white" /> 
                 </Button>
@@ -75,10 +76,10 @@ const EditCategoryModal: React.FC<CategoryEditViewProps> = ({
     );
     };
 
-const EditCategoryScreen = (props: CategoryEditViewProps) => (
-        <EditCategoryProvider>
-          <EditCategoryModal {...props} />
-        </EditCategoryProvider>
+const EditSavingScreen = (props: SavingEditViewProps) => (
+        <EditSavingProvider>
+          <EditSavingModal {...props} />
+        </EditSavingProvider>
 );
 
 const styles = StyleSheet.create({
@@ -133,4 +134,4 @@ inputText: {
 });
 
 
-export default EditCategoryScreen;
+export default EditSavingScreen;

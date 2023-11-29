@@ -8,21 +8,19 @@ import SavingsDatasourceImp from "../../infraestructure/datasources/savingsDatas
 interface ContextDefinition {
   //definición del estado
   loading: boolean;
-  saved: boolean,
+  saved: boolean, 
   message?: string,
   saving: Saving,
-  
 
   // acciones que tendrá mi context
   setSavingProp: (property: string, value: any) => void,
-  saveSaving: (onSaved: Function) => void,
-  setSaving: (saving: Saving) => void;
+  saveSaving: () => void,
 }
 
 //crear el objeto context de react
-const EditSavingContext = createContext({} as ContextDefinition);
+const AddSavingContext = createContext({} as ContextDefinition);
 
-interface EditSavingState {
+interface AddSavingState {
   //definición del estado
   loading: boolean;
   saved: boolean,
@@ -31,13 +29,13 @@ interface EditSavingState {
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type EditSavingActionType =
+type AddSavingActionType =
   | { type: "Set Loading"; payload: boolean }
   | { type: "Set Saved"; payload: boolean }
   | { type: "Set Saving"; payload: Saving };
 
 //inicializar el state
-const initialState: EditSavingState = {
+const initialState: AddSavingState = {
   loading: false,
   saved: false,
   message: undefined,
@@ -50,9 +48,9 @@ const initialState: EditSavingState = {
     ),
 };
 
-function EditSavingReducer(
-  state: EditSavingState, 
-  action: EditSavingActionType
+function AddSavingReducer(
+  state: AddSavingState, 
+  action: AddSavingActionType
 ) {
   switch (action.type) {
     //manipular el estado con base a las acciones
@@ -77,8 +75,8 @@ type Props = {
   children?: ReactNode;
 };
 
-const EditSavingProvider:FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(EditSavingReducer, initialState);
+const AddSavingProvider:FC<Props> = ({ children }) => {
+  const [state, dispatch] = useReducer(AddSavingReducer, initialState);
 
   function setSavingProp(property: string, value: any) {
     // mandar el valor al estado user
@@ -91,7 +89,7 @@ const EditSavingProvider:FC<Props> = ({ children }) => {
     });
   }
 
-  async function saveSaving(onSaved: Function) {
+  async function saveSaving() {
     const savingsRepository = new SavingsRepositoryImp(
       new SavingsDatasourceImp
     )
@@ -100,53 +98,34 @@ const EditSavingProvider:FC<Props> = ({ children }) => {
       type: 'Set Saved',
       payload: true,
     });
-
-
-    //si ya me mando, cerrar el modal
+    
     const savedSaving = await savingsRepository.addSaving(state.saving);
     console.log(savedSaving);
     dispatch({
       type: 'Set Saved',
       payload: false,
     });
-
-    onSaved(state.saving);
-    return;
-    
-  }
-
-    
-
-  function setSaving(saving: Saving){
-    dispatch({
-        type: 'Set Saving',
-        payload: saving
-      });
-
-      
-
   }
 
   return (
-    <EditSavingContext.Provider value={{
+    <AddSavingContext.Provider value={{
         ...state,
         //funciones
         setSavingProp,
         saveSaving,
-        setSaving,
       }}
     >
       {children}
-    </EditSavingContext.Provider>
+    </AddSavingContext.Provider>
   );
 }
 
-function useEditSavingState() {
-  const context = useContext(EditSavingContext);
+function useAddSavingState() {
+  const context = useContext(AddSavingContext);
   if (context === undefined) {
-    throw new Error("useEditSavingState debe ser usado " + " con un useEditSavingState");
+    throw new Error("useAddSavingState debe ser usado " + " con un useAddSavingState");
   }
   return context;
 }
 
-export { EditSavingProvider, useEditSavingState };
+export { AddSavingProvider, useAddSavingState };

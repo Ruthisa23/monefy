@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList  } from 'react-native';
-import { AddCategoryProvider, useAddCategoryState } from '../../providers/addCategoryProvider';
+import { AddCategoryProvider, useAddCategoryState } from '../../providers/addSavingProvider';
 import Modal from 'react-native-modal';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
