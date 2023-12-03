@@ -2,8 +2,9 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign } from '@expo/vector-icons'; 
 
-import SavingScreen from "../features/savings/application/screens/savingScreen"; 
+import SavingsScreen from "../features/savings/application/screens/savingsScreen"; 
 import CategorysScreen from "../features/category/application/screens/categorysScreen";
+import IncomesScreen from "../features/income/application/screens/incomesScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +33,7 @@ const NavigationSavi = () => {
             />
             <Tab.Screen 
                 name="Saving"
-                component={SavingScreen}
+                component={SavingsScreen}
                 options={{
                     tabBarLabelStyle: {
                         fontSize: 15
@@ -44,7 +45,7 @@ const NavigationSavi = () => {
             />
             <Tab.Screen 
                 name="Income"
-                component={SavingScreen}
+                component={IncomesScreen}
                 options={{
                     tabBarLabelStyle: {
                         fontSize: 15,

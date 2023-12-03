@@ -11,6 +11,9 @@ import Saving from '../../../domain/entities/savings';
 import EditSavingScreen from './savingEditModal';
 import ConfirmationModal from '../../../../../components/modal';
 
+import UsersResult from '../../../domain/entities/usersResult';
+import User from '../../../domain/entities/users';
+
 
 type CardProps = {
     saving : Saving,
@@ -94,8 +97,9 @@ const SavingCard: React.FC<CardProps> = ({
                     <View>
                         <View style={styles.cardInfo}>
                         <Text style={styles.info}>Id: {saving.id}</Text>
-                        <Text style={styles.info}>Descripcion: {saving.description}</Text>
-                        <Text style={styles.info}>Monto: {saving.acount}</Text>
+                        <Text style={styles.info}>Concepto: {saving.concepto}</Text>
+                        <Text style={styles.info}>Monto: {saving.monto}</Text>
+                        
                         </View>
             
                     </View> 
@@ -138,8 +142,8 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 14,
         border: 1,
-        width:144,
-        minHeight: 110,
+        width:305,
+        minHeight: 100,
         overflow: "hidden",
         margin: 8
     },
@@ -156,7 +160,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     buttonContainer: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     button: {
         width: 'auto',
