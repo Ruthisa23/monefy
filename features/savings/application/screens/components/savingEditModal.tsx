@@ -5,7 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Saving from '../../../domain/entities/savings';
 import { EditSavingProvider, useEditSavingState } from '../../providers/editSavingProvider';
-import React, { useEffect} from 'react';
+import React, { useEffect, useState} from 'react';
+import backendConfig from '../../../../../config/backend/config';
+
+import SelectDropdown from 'react-native-select-dropdown';
+import UsersResult from '../../../domain/entities/usersResult';
+import User from '../../../domain/entities/users';
+
 
 interface SavingEditViewProps {
 
@@ -33,12 +39,42 @@ const EditSavingModal: React.FC<SavingEditViewProps> = ({
         setSaving,
     } = useEditSavingState();
 
+    
+    const [
+        users,
+         setUsers
+    ] = useState([]);
+
     //al recibir el usuario a editar, pasarlo al proveedor de estado
 
     useEffect(() => {
         setSaving(savingEdit)
     }, [savingEdit]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const usersResult = await getUsers();
+            setUsers(usersResult.user);
+          } catch (error) {
+            console.error('Error fetching users:', error);
+          }
+        };
+    
+        fetchData();
+      }, []);
+    
+      const getUsers = async () => {
+        return fetch(`${backendConfig.url}/api/users`)
+          .then((response) => response.json())
+          .then((response) => {
+            if (!response) {
+              return new UsersResult([]);
+            }
+            const user = response.map((item) => new User(item.name, item.id));
+            return new UsersResult(user);
+          });
+      };
 
 
     return (
@@ -50,13 +86,48 @@ const EditSavingModal: React.FC<SavingEditViewProps> = ({
             <TextInput style={styles.inputText}
                 placeholder="Escribe aqui"
                 placeholderTextColor="#808080"
-                value={saving?.description || ''}
+                value={saving?.concepto || ''}
                 onChangeText={(text) => {
-                    setSavingProp('name', text);
+                    setSavingProp('concepto', text);
                 }}
                 textContentType="name"
                 />
             </View>
+
+            <Text style={styles.info}>Actualizar Ingreso</Text>
+
+            <View style={styles.inputView}>
+            <TextInput style={styles.inputText}
+                placeholder="Escribe aqui"
+                placeholderTextColor="#808080"
+                value={saving?.monto.toString() || ''}
+                onChangeText={(text) => {
+                    setSavingProp('monto', text);
+                }}
+                textContentType="name"
+                />
+            </View>
+
+            <Text style={styles.info2}>Selecciona un Usuario</Text>
+          <View>
+          <SelectDropdown
+            data={users}
+            onSelect={(selectedItem, index) => {
+              if(selectedItem){
+                setSavingProp('clientId', selectedItem.id)
+                console.log(selectedItem.id);
+              } else {
+                console.log("alerta de error, panal");  
+              }
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem.name;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item.name;
+            }}
+          />
+        </View>
 
             <View style={styles.buttonContainer}>
             
@@ -107,6 +178,13 @@ info: {
     fontSize: 16,
     marginTop: 25,
 },
+info2: {
+    marginBottom: 2,
+        textAlign: "center",
+        color: 'black',
+        fontSize: 15,
+        padding: 5,
+  },
 inputView: {
   width: "80%",
   marginTop: 10,

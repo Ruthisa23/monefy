@@ -3,27 +3,21 @@ import categorysDatasource from "../datasourses/savingsDatasource";
 class Saving {
     
     id?: number;
-    description: string;
-    acount: number;
-    balance: number;
-    categoryId: number;
+    concepto: string;
+    monto: number;
     clientId: number;
 
     constructor(
         
-        description: string,
-        acount: number,
-        balance: number,
-        categoryId: number,
+        concepto: string,
+        monto: number,
         clientId: number,
         id?: number,
 
     ) {
         this.id = id;
-        this.description = description;
-        this.acount = acount;
-        this.balance = balance;
-        this.categoryId = categoryId;
+        this.concepto = concepto;
+        this.monto = monto;
         this.clientId = clientId;
     }
 }

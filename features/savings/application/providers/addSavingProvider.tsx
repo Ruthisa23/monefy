@@ -11,7 +11,7 @@ interface ContextDefinition {
   saved: boolean, 
   message?: string,
   saving: Saving,
-
+  
   // acciones que tendrá mi context
   setSavingProp: (property: string, value: any) => void,
   saveSaving: () => void,
@@ -42,9 +42,7 @@ const initialState: AddSavingState = {
   saving: new Saving(
     '',
     0,
-    0,
-    0,
-    0,
+    0
     ),
 };
 

@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import SavingCard from './components/savingsCard';
 
 //import { SavingsProvider, useSavingsState } from '../providers/SavingsProvider';
-import { SavingsProvider, useSavingsState } from '../providers/SavingsProvider'; //la ultima carpeta no se llama asi, error y no error
+import { SavingsProvider, useSavingsState } from '../providers/savingsProvider'; //la ultima carpeta no se llama asi, error y no error
 
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Cambia MaterialIcons por el conjunto de íconos que desees usar

@@ -45,8 +45,6 @@ const initialState: EditSavingState = {
     '',
     0,
     0,
-    0,
-    0,
     ),
 };
 

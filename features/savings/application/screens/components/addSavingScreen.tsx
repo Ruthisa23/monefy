@@ -1,19 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList  } from 'react-native';
-import { AddCategoryProvider, useAddCategoryState } from '../../providers/addSavingProvider';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { AddSavingProvider, useAddSavingState } from '../../providers/addSavingProvider';
 import Modal from 'react-native-modal';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
+import backendConfig from '../../../../../config/backend/config';
+import UsersResult from '../../../domain/entities/usersResult';
+import User from '../../../domain/entities/users';
+
+import SelectDropdown from 'react-native-select-dropdown';
 
 
-const AddCategoryModal = ({ isVisible, closeModal, updateCategories }) => {
+const AddSavingModal = ({ isVisible, closeModal }) => {
 
-  const { loading, saving, category, setCategoryProp, saveCategory} = useAddCategoryState();
+  const { loading, saving, setSavingProp, saveSaving} = useAddSavingState();
+
+  const [users, setUsers] = useState([]);
+
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const usersResult = await getUsers();
+        setUsers(usersResult.user);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const getUsers = async () => {
+    return fetch(`${backendConfig.url}/api/users`)
+      .then((response) => response.json())
+      .then((response) => {
+        if (!response) {
+          return new UsersResult([]);
+        }
+        const user = response.map((item) => new User(item.name, item.id));
+        return new UsersResult(user);
+      });
+  };
   
-  const handleSaveCategory = async () => {
+  const handleSaveSaving = async () => {
     try {
-    await saveCategory();
-    updateCategories(); // Actualizar la lista de categorías
+    await saveSaving();
+    //updateSaving(); // Actualizar la lista de categorías
     closeModal();
     
     } catch (error) {
@@ -27,28 +61,67 @@ const AddCategoryModal = ({ isVisible, closeModal, updateCategories }) => {
       }
     }
   };
-  
 
   return (
     <Modal isVisible={isVisible}>
       <View style={styles.modalContainer}>
         <Text style={styles.info}>Registrar Categoria</Text>
-
+        <Text style={styles.info2}>Concepto</Text>
         <View style={styles.inputView}>
           <TextInput style={styles.inputText}
               placeholder="Escribe aqui"
               placeholderTextColor="#808080"
-              value={category?.name || ''}
+              value={saving?.concepto || ''}
               onChangeText={(text) => {
-                setCategoryProp('name', text);
+                setSavingProp('concepto', text);
+              }}
+              textContentType="name"
+            />
+          </View>
+          
+        <Text style={styles.info2}>Monto</Text>
+          <View style={styles.inputView}>
+          <TextInput style={styles.inputText}
+              placeholder="Escribe aqui"
+              placeholderTextColor="#808080"
+              value={saving?.monto.toString()|| ''}
+              onChangeText={(text) => {
+                setSavingProp('monto', text);
               }}
               textContentType="name"
             />
           </View>
 
+          <Text style={styles.info2}>Selecciona un Usuario</Text>
+          <View>
+
+          <View>
+          <SelectDropdown
+            data={users}
+            onSelect={(selectedItem, index) => {
+              if(selectedItem){
+                setSavingProp('clientId', selectedItem.id)
+                console.log(selectedItem.id);
+              } else {
+                console.log("alerta de error, panal");  
+              }
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem.name;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item.name;
+            }}
+          />
+        </View>
+
+          </View>
+
+
+
         <View style={styles.buttonContainer}>
           
-          <TouchableOpacity onPress={() => handleSaveCategory()}>
+          <TouchableOpacity onPress={() => handleSaveSaving()}>
             <Button style={styles.button} buttonColor='#f45572' >
                   <Icon name="check" size={20} color="white" /> 
             </Button>
@@ -64,10 +137,10 @@ const AddCategoryModal = ({ isVisible, closeModal, updateCategories }) => {
   );
 };
 
-const AddCategoryScreen = (props: any) => (
-  <AddCategoryProvider>
-    <AddCategoryModal {...props} />
-  </AddCategoryProvider>
+const AddSavingScreen = (props: any) => (
+  <AddSavingProvider>
+    <AddSavingModal {...props} />
+  </AddSavingProvider>
 );
 
 const styles = StyleSheet.create({
@@ -93,6 +166,14 @@ info: {
         textAlign: "center",
         color: 'black',
         fontSize: 16,
+        padding: 20,
+},
+info2: {
+  marginBottom: 2,
+      textAlign: "center",
+      color: 'black',
+      fontSize: 15,
+      padding: 5,
 },
 inputView: {
   width: "80%",
@@ -117,8 +198,11 @@ inputText: {
   height: 50,
   color: "#333", // Texto oscuro
 },
+picker: {
+  height: 10,
+  width: 80,
+},
 
 });
 
-
-export default AddCategoryScreen;
+export default AddSavingScreen;

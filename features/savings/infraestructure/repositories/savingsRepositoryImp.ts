@@ -1,15 +1,12 @@
 import SavingsDatasource from "../../domain/datasourses/savingsDatasource";
 import Saving from "../../domain/entities/savings";
 import SavingsResult from "../../domain/entities/savingsResult";
+import UsersResult from "../../domain/entities/usersResult";
 import SavingsRepository from "../../domain/repositorio/savingsRepository";
-
-
 
 class SavingsRepositoryImp extends SavingsRepository {
 
-    
     datasource: SavingsDatasource;
-
 
     constructor(datasource: SavingsDatasource) {
         super();
@@ -26,6 +23,10 @@ class SavingsRepositoryImp extends SavingsRepository {
 
     getSavings(): Promise<SavingsResult> {
         return this.datasource.getSavings();
+    }
+
+    getUsers(): Promise<UsersResult> {
+        return this.datasource.getUsers();
     }
 
 }
