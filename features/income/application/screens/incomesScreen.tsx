@@ -1,54 +1,122 @@
-import { View, StyleSheet, ToastAndroid, Image } from "react-native";
-import { Text, TextInput, Button } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import SavingCard from './components/incomesCard';
 
-export default function IncomesScreen(){
+//import { SavingsProvider, useSavingsState } from '../providers/SavingsProvider';
+import { SavingsProvider, useSavingsState } from '../providers/incomesProvider'; //la ultima carpeta no se llama asi, error y no error
 
-return (
-     
-    <View style={styles.container}>
-      <View style={styles.coning}>
+import { Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Cambia MaterialIcons por el conjunto de íconos que desees usar
 
-        <Image
-            style={styles.img}
-            source={require('../../../../assets/in.png')}
-        />
-      </View>
-    <Text style={styles.title}>Ingresa Tus Gastos</Text>
+
+import AddSavingScreen from './components/addIncomeScreen';
+
+
+import EditSavingScreen from './components/incomeEditModal';
+
+const SavingsScreenView = () => {
+
+  const { 
+    savings,
+    loading,
+    savingSelected,
+
+    //actions
+    getSavings,
+    setSavingSelected,
+    onUpdateSaving,
+   } = useSavingsState();
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const renderCards = () => {
+    if(!savings)
+    {
+      return null;
+    }
+    
+    return savings?.map((saving) => (
+      <SavingCard 
+      key={`saving${saving.id}`} 
+      saving={saving} 
+      onEdit={setSavingSelected}
+      />
+      )
+    );
+  }
+
+  useEffect(() => {
+    getSavings();
+  }, []);
+
+    return (
+    <ScrollView>
+
+    <View style={styles.buttonContainer}>
+      <Button style={styles.button} buttonColor='#6a9eda' mode="contained" onPress={toggleModal}>
+          <Icon name="add" size={25} color="white" />
+      </Button>
     </View>
+   
+      <View style={styles.container}>
+      
+      {renderCards()}
+
+    
+      </View>
+      
+      <AddSavingScreen 
+      isVisible={isModalVisible} 
+      closeModal={toggleModal}
+      />
+
+      {!!savingSelected ? (
+
+        <EditSavingScreen
+        savingEdit={savingSelected}
+        isVisible={!!savingSelected}
+        onSaved={onUpdateSaving}
+        closeModal={setSavingSelected}
+        />
+
+      ) : null }
+      
+      
+  
+    </ScrollView>
   );
 }
 
+const IncomesScreen = (props: any) => (
+  <SavingsProvider>
+    <SavingsScreenView {...props} /> 
+  </SavingsProvider>
+)
+
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    backgroundColor: '#fff', 
-  },
-  coning: {
-    backgroundColor: '#fff',
+    //flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    flexWrap: 'wrap',
+    flexDirection:'row'
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  input: {
-    marginBottom: 16,
-    backgroundColor: '#fff',
+  buttonContainer: {
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
   },
   button: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  img:{
-    width: 150,
-    height: 150,
-    marginBottom:50,
-    justifyContent: 'center',
-    shadowColor: "#ccc",
-    shadowOpacity: 0.8,
-  },
+    width: 'auto',
+    height: 70,
+    justifyContent:'center'
+
+  }
+
 });
+
+export default IncomesScreen;

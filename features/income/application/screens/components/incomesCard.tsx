@@ -1,87 +1,172 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
-import Character from "../../../domain/entities/character";
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Cambia MaterialIcons por el conjunto de íconos que desees usar
+
+
+import { getNextColor } from '../../../../../components/colors';
+import backendConfig from "../../../../../config/backend/config";
+
+import Saving from '../../../domain/entities/incomes';
+import EditSavingScreen from './incomeEditModal';
+import ConfirmationModal from '../../../../../components/modal';
+
+import UsersResult from '../../../domain/entities/usersResult';
+import User from '../../../domain/entities/users';
+
 
 type CardProps = {
-    character : Character,
+    saving : Saving,
+    onEdit?: Function,
 }
 
-export default function CharacterCard (props : CardProps) {
+
+const SavingCard: React.FC<CardProps> = ({
+    saving,
+    onEdit,
+}) => {
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalVisibleE, setModalVisibleE] = useState(false);
+
+    const [deleted, setDeleted, ] = useState(false);
+
+    const [currentColor, setCurrentColor] = useState(getNextColor());
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
+    const toggleModalEdit = () => {
+        setModalVisibleE(!isModalVisibleE);
+    };
+
+    const handleEdit = () => {
+      //toggleModalEdit();
+        if(onEdit){
+            onEdit(saving);
+        }
+    };
+
+    const confirmDelete = async () => {
+        try {
+            await deleteC(saving.id);
+            // Cierra el modal después de la eliminación
+            toggleModal();
+        } catch (error) {
+            // Manejar cualquier error que ocurra durante la eliminación
+        }
+    }
+
+    const deleteC = async (id:any) => {
+      
+        return fetch (`${backendConfig.url}/api/savings?id=${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+         })
+         .then((response) => response.json())
+         .then((response) => {
+            console.log(response);
+
+        setDeleted(true);
+    
+        return response;
+            
+         });
+    
+    };
+
+    useEffect(() => {
+        setCurrentColor(getNextColor()); // Actualiza el color al montar el componente
+    }, []); // Asegura que esto se ejecute solo una vez al montar
+
+    // Verificar si la categoría se ha eliminado
+    if (deleted) {
+    // Puedes mostrar un mensaje o hacer cualquier otra acción aquí
+        return null;
+    }
 
     return (
-        <View style={styles.container}>
+
+            <View style={styles.container}>
             
-            <TouchableOpacity style={styles.cardContainer}>
-                <Image
-                    source={{ uri: props.character.image }}
-                    style={styles.cardImage}
-                />
-                <View style={styles.cardContent}>
-                    <Text style={styles.cardTitle}>{props.character.name}</Text>
-                    <View style={styles.cardInfo}>
-                    <Text style={styles.info}>Status: {props.character.status}</Text>
-                    <Text style={styles.info}>Gender: {props.character.gender}</Text>
-                    <Text style={styles.info}>Origin: {props.character.gender}</Text>
-                    <Text style={styles.info}>Specie: {props.character.gender}</Text>
-                    </View>
+                <TouchableOpacity style={{ ...styles.cardContainer, backgroundColor: currentColor}}>
+           
+                    <View>
+                        <View style={styles.cardInfo}>
+                        <Text style={styles.info}>Id: {saving.id}</Text>
+                        <Text style={styles.info}>Desciption: {saving.description}</Text>
+                        <Text style={styles.info}>Balance: {saving.balance}</Text>
+                        
+                        </View>
+            
+                    </View> 
+                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                    
+                    <Button style={styles.button} buttonColor='#6a9eda' onPress={handleEdit}>
+                        <Icon name="refresh" size={20} color="white" /> 
+                    </Button>
+
+                    <Button style={styles.button} buttonColor='#f45572' onPress={() => toggleModal()}>
+                        <Icon name="delete" size={20} color="white" />
+                    </Button>
+                    <ConfirmationModal
+                        isVisible={isModalVisible}
+                        onAccept={confirmDelete}
+                        onCancel={toggleModal}
+                    />
                 </View>
-            </TouchableOpacity>
-        </View>
+            </View>
+        
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
+export default SavingCard;
 
-        flex: 1,
-        flexWrap: "wrap",
-        flexDirection: "row",
-        padding: 5,
-        paddingHorizontal:2,
-        alignItems: "center",
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginTop: 30,
+
+const styles = StyleSheet.create({
+
+    container: {  
+
+        display:'flex',
+        height:'auto',
+        width:'auto',
+        
     },
+    
     cardContainer: {
-        backgroundColor: "black",
+
         padding: 8,
         borderRadius: 14,
         border: 1,
-        width:300,
-        height:500,
+        width:305,
+        minHeight: 100,
         overflow: "hidden",
         margin: 8
     },
 
-    cardImage: {
-        borderRadius: 5,
-        width: 282,
-        height: 200,
-        position: "relative",
-        objectFit: "cover",
-        margin: 0
-    },
-
-    cardContent: {
-        marginLeft: 10,
-    },
-
-    cardTitle: {
-        textAlign: "center",
-        fontSize: 30,
-        color: "#FFFFFF"
-    },
-
     cardInfo: {
-        padding: 8,
-        marginTop: 19,
+        padding: 8
        
     },
 
     info: {
-        marginBottom: 10,
+        marginBottom: 2,
         textAlign: "center",
-        color: 'grey',
-        fontSize: 30,
+        color: 'black',
+        fontSize: 16,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    button: {
+        width: 'auto',
+        marginLeft: 8,
+        marginRight: 8
+
     }
 })

@@ -1,18 +1,38 @@
-import CharactersDatasource from "../../domain/datasourses/incomesDatasource";
-import CharactersResult from "../../domain/entities/incomesResult";
-import CharactersRepository from "../../domain/repositorio/incomesRepository";
+import SavingsDatasource from "../../domain/datasourses/incomesDatasource";
+import CategorysResult from "../../domain/entities/categoryResult";
+import Saving from "../../domain/entities/incomes";
+import SavingsResult from "../../domain/entities/incomesResult";
+import UsersResult from "../../domain/entities/usersResult";
+import SavingsRepository from "../../domain/repositorio/incomesRepository";
 
-class CharactersRepositoryImp extends CharactersRepository {
-    datasource: CharactersDatasource;
+class SavingsRepositoryImp extends SavingsRepository {
 
-    constructor(datasource: CharactersDatasource) {
+    datasource: SavingsDatasource;
+
+    constructor(datasource: SavingsDatasource) {
         super();
         this.datasource = datasource;
     }
 
-    getCharacters(page: number): Promise<CharactersResult> {
-        return this.datasource.getCharacters(page);
+    deleteSaving(id: any): Promise<Saving> {
+        return this.datasource.deleteSaving(id);
     }
-}
 
-export default CharactersRepositoryImp;
+    addSaving(saving: Saving): Promise<Saving>{
+        return this.datasource.addSaving(saving);
+    }
+
+    getSavings(): Promise<SavingsResult> {
+        return this.datasource.getSavings();
+    }
+
+    getUsers(): Promise<UsersResult> {
+        return this.datasource.getUsers();
+    }
+
+    getCategorys(): Promise<CategorysResult> {
+        return this.datasource.getCategorys();
+    }
+
+}
+export default SavingsRepositoryImp;
