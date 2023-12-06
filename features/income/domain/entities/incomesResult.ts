@@ -1,24 +1,15 @@
+import Saving from "./incomes";
 
-import Character from "./incomes";
-
-
-class CharactersResult{
-    page : number;
-    count : number;
-    totalPages: number;
-    characters: Character[];
+class SavingsResult{
+    
+    saving: Saving[];
 
     constructor(
-        page: number,
-        count: number,
-        totalPages: number,
-        characters: Character[],
+
+        saving: Saving[],
     ) {
-        this.characters = characters;
-        this.page = page;
-        this.count = count;
-        this.totalPages = totalPages;
+        
+        this.saving = saving;
     }
 }
-
-export default CharactersResult;
+export default SavingsResult;

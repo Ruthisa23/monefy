@@ -1,69 +1,74 @@
-//manejo de estado para personajes
-
 import { FC, ReactNode, createContext, useReducer, useContext} from "react";
-import Character from "../../domain/entities/incomes"
-import CharactersResult from "../../domain/entities/incomesResult";
-import CharactersRepositoryImp from "../../infraestructure/repositories/incomesRepositoryImp";
-import CharacterDatasourceImp from "../../infraestructure/datasources/incomesDatasourceImp";
 
-//estructura decontext
+import Saving from "../../domain/entities/incomes";
+
+import SavingsResult from "../../domain/entities/incomesResult";
+import SavingsRepositoryImp from "../../infraestructure/repositories/incomesRepositoryImp";
+import SavingsDatasourceImp from "../../infraestructure/datasources/incomesDatasourceImp";
+
+//estructura de context
+
 
 interface ContextDefinition{
-    loading:  boolean,
-    page:number,
-    totalpages:number,
-    count:number,
-    characters:Character[],
 
-    getCharacters:(page:number)=>void;
+    loading:  boolean,
+    savings: Saving[];
+    savingSelected: Saving | null;
+
+    getSavings:()=>void;
+    setSavingSelected:(saving: Saving | null) => void;
+    onUpdateSaving: (saving: Saving) => void;
 }
 
-const charactersContext = createContext ( {} as ContextDefinition);
+const savingsContext = createContext ( {} as ContextDefinition);
 
 
-interface CharacterState {
+interface SavingsState {
     loading:  boolean,
-    page:number,
-    totalpages:number,
-    count:number,
-    characters:Character[],
+    savings:Saving[],
+    savingSelected: Saving | null;
 }
 
 //definir los tipos de acciones que podra ejecutar el context
 
-type CharactersActionType = 
-{ type: 'Set Loading', payload: boolean}
-|    {type: 'Set Data', payload: CharactersResult}
+type SavingsActionType = 
+    |  { type: 'Set Loading', payload: boolean}
+    |  {type: 'Set Data', payload: SavingsResult}
+    |  {type: 'Set Saving Selected', payload:  Saving | null}
+    // |  {type: 'Set Category Selected', payload: Category | null } //parte para editar
     
 //iniciar el state
 
-const InitialState : CharacterState = {
+const InitialState : SavingsState = {
     
     loading:  false,
-    page: 0,
-    count: 0,
-    totalpages: 0,
-    characters: [],
+    savings: [],
+    savingSelected: null,
 }
 
-function characterReducer(
-    state: CharacterState,
-    action: CharactersActionType){
+function savingReducer(
+    state: SavingsState,
+    action: SavingsActionType){
         switch (action.type){
             case 'Set Loading':
-                return{...state, loading: action.payload};
+                return {
+                    ...state, 
+                    loading: action.payload
+                };
             case 'Set Data':
                 return {
                     ...state,
-                    page:action.payload.page,
-                    count:action.payload.count,
-                    totalPages:action.payload.totalPages,
-                    characters:action.payload.characters,
+                    savings:action.payload.saving,
                     loading: false
-                }
+                };
+            case 'Set Saving Selected':
+                return {
+                    ...state,
+                    savingSelected:action.payload,
+                };
                 default:
                     return state;
-        }
+    }
 }
     //implementar el proveedor para Characters
 
@@ -71,48 +76,77 @@ type Props = {
         children?: ReactNode
 }
 
-const CharactersProvider:FC<Props> = ({ children }) => {
-    const [state, dispatch] = useReducer( characterReducer, InitialState);
+const SavingsProvider:FC<Props> = ({ children }) => {
+    const [state, dispatch] = useReducer( savingReducer, InitialState);
 
     //acciones
 
-    const getCharacters = async (page: number) => {
-        const reposirtory = new CharactersRepositoryImp(
-            new CharacterDatasourceImp()
+    const getSavings = async () => {
+        const reposirtory = new SavingsRepositoryImp(
+            new SavingsDatasourceImp()
         );
 
+    
 //cambiar el estado a loaging
 
         dispatch({
             type: 'Set Loading',
             payload: true,
-        })
+        });
 
-        const apiResult = await reposirtory.getCharacters(page);
+        const apiResult = await reposirtory.getSavings();
 
         dispatch({
             type: 'Set Data',
             payload: apiResult,
-        })
+        });
+    };
+
+    function setSavingSelected (saving: Saving | null) {
+   
+        dispatch({
+            type: 'Set Saving Selected',
+            payload: saving,
+        });
+    }
+
+    function onUpdateSaving(saving: Saving) {
+        //buscar el registro en category y reemplazarlo
+        //actualizar el estado category
+        const savingsClone = [...state.savings];
+        const index = savingsClone.findIndex((item)=> item.id == saving.id);
+        savingsClone.splice(index, 1, saving);
+
+        dispatch({
+            type: 'Set Data',
+            payload: {
+                saving: savingsClone,
+            }
+        }
+        )
+        //cerrar el modal
+        setSavingSelected(null);
     }
 
     return(
-        <charactersContext.Provider value ={{
+        <savingsContext.Provider value ={{
             ...state,
-            getCharacters
+            getSavings,
+            setSavingSelected,
+            onUpdateSaving,
         }}>
         {children}
-        </charactersContext.Provider>
+        </savingsContext.Provider>
     )
 };
 
-    function useCharactersState(){
-        const context = useContext(charactersContext);
+    function useSavingsState(){
+        const context = useContext(savingsContext);
         if(context === undefined){
-            throw new Error ("useCharactersState debe ser usado" + "con un charactersProvider");
+            throw new Error ("useSavingsState debe ser usado" + "con un savingsProvider");
         }
 
         return context;
     }
 
-export {CharactersProvider, useCharactersState}
+export {SavingsProvider, useSavingsState}
